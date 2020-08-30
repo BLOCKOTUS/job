@@ -1,0 +1,23 @@
+{
+  "name": "job",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BLOCKOTUS/register.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BLOCKOTUS/register/issues"
+  },
+  "homepage": "https://github.com/BLOCKOTUS/register#readme",
+  "dependencies": {
+    "fabric-network": "^2.2.0",
+    "jsrsasign": "^9.0.1"
+  }
+}

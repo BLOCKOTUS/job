@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/BLOCKOTUS/register#readme",
   "dependencies": {
-    "fabric-network": "^2.2.0",
-    "jsrsasign": "^9.0.1"
+    "fabric-network": "^2.2.0"
   }
 }

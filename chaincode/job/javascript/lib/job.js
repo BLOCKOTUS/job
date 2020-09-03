@@ -19,20 +19,22 @@ class Job extends Contract {
         if(params.length !== count) throw new Error(`Incorrect number of arguments. Expecting ${count}. Args: ${JSON.stringify(params)}`);
     }
 
-    getCreatorId(ctx) {
-        const clientId = ctx.clientIdentity.id;
-        const mspId = ctx.clientIdentity.mspId;
-        const id = `${mspId}::${clientId}`;
-        return id;
+    async getCreatorId(ctx) {
+        const rawId = await ctx.stub.invokeChaincode("helper", ["getCreatorId"], "mychannel");
+        if (rawId.status !== 200) throw new Error(rawId.message);
+        
+        return rawId.payload.toString('utf8');
+    }
+
+    async getTimestamp(ctx) {
+        const rawTs = await ctx.stub.invokeChaincode("helper", ["getTimestamp"], "mychannel");
+        if (rawTs.status !== 200) throw new Error(rawId.message);
+        
+        return rawTs.payload.toString('utf8');
     }
 
     getCountPerType(type) {
         return "3";
-    }
-
-    getTimestamp(ctx) {
-        const timestamp = ctx.stub.getTxTimestamp();
-        return `${timestamp.seconds}${timestamp.nanos}`;
     }
 
     async createCompositeKeyForWorkers(ctx, workersIds, status, jobId) {
@@ -59,8 +61,8 @@ class Job extends Contract {
         const params = args.params;
         this.validateParams(params, 4);
 
-        const id = this.getCreatorId(ctx);
-        const jobId = `${id}||${this.getTimestamp(ctx)}`;
+        const id = await this.getCreatorId(ctx);
+        const jobId = `${id}||${await this.getTimestamp(ctx)}`;
 
         const value = {
             type: params[0],
@@ -99,7 +101,7 @@ class Job extends Contract {
         const params = args.params;
         this.validateParams(params, 1);
 
-        const id = this.getCreatorId(ctx);
+        const id = await this.getCreatorId(ctx);
         const status = params[0];
 
         var list = [];
@@ -149,7 +151,7 @@ class Job extends Contract {
         const params = args.params;
         this.validateParams(params, 2);
 
-        const id = this.getCreatorId(ctx);
+        const id = await this.getCreatorId(ctx);
         const jobId = params[0];
         const result = params[1];
 
@@ -166,7 +168,7 @@ class Job extends Contract {
 
         // complete job
         const value = {result, jobId, workerId: id};
-        const resultId = `${id}||${params[0]}||${this.getTimestamp(ctx)}`;
+        const resultId = `${id}||${params[0]}||${await this.getTimestamp(ctx)}`;
 
         await ctx.stub.putState(resultId, Buffer.from(JSON.stringify(value)));
 

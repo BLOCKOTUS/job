@@ -48,6 +48,8 @@ async function create({
 
 async function list({
 	status,
+	chaincode,
+	key,
 	user
 }) {
 	// Submit the specified transafalsection.
@@ -60,15 +62,29 @@ async function list({
 		const {contract, gateway} = await 
 			getContractAndGateway({username: user.username, chaincode: 'job', contract: 'Job'})
 				.catch(reject);
+
+		var rawJobs, jobs;
 		
 		// submit transaction
-		const rawJobs = await 
-			contract
-				.submitTransaction('listJobs', status)
-				.catch(reject);
+		if(status){
+			rawJobs = await
+				contract
+					.submitTransaction('listJobs', status)
+					.catch(reject);
 
-		const jobs = JSON.parse(rawJobs.toString('utf8'))
-		console.log('Transaction has been submitted');
+			jobs = JSON.parse(rawJobs.toString('utf8'))
+			console.log('Transaction has been submitted');
+		}
+
+		if(chaincode && key && !status){
+			rawJobs = await
+				contract
+					.submitTransaction('listJobByChaincodeAndKey', chaincode, key)
+					.catch(reject);
+
+			jobs = JSON.parse(rawJobs.toString('utf8'))
+			console.log('Transaction has been submitted');
+		}
 		
 		//disconnect
 		await gateway.disconnect();

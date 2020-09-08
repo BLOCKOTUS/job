@@ -77,6 +77,8 @@ class Job extends Contract {
         const indexCreator = await ctx.stub.createCompositeKey('id~jobId', [id, jobId]);
         await ctx.stub.putState(indexCreator, Buffer.from('\u0000'));
         
+        const indexChaincodeKey = await ctx.stub.createCompositeKey('chaincode~key~id~jobId', [params[2], params[3], id, jobId]);
+        await ctx.stub.putState(indexChaincodeKey, Buffer.from('\u0000'));
 
         // select workers
         const count = this.getCountPerType(params[0]);
@@ -142,6 +144,38 @@ class Job extends Contract {
 
         
         return job;
+    }
+
+    // params[0]: chaincode
+    // params[1]: key
+    async listJobByChaincodeAndKey(ctx){
+        const args = ctx.stub.getFunctionAndParameters();
+        const params = args.params;
+        this.validateParams(params, 2);
+
+        const id = await this.getCreatorId(ctx);
+        const chaincode = params[0];
+        const key = params[1];
+
+        // verify that the creator has this jobId assigned
+        var list = [];
+        const results = await ctx.stub.getStateByPartialCompositeKey('chaincode~key~id~jobId', [chaincode, key, id]);
+
+        // Iterate through result set and for each asset found, transfer to newOwner
+		let responseRange = await results.next();
+		while (!responseRange.done) {
+			if (!responseRange || !responseRange.value || !responseRange.value.key) {
+				return;
+            }
+
+            let splitedKey = await ctx.stub.splitCompositeKey(responseRange.value.key)
+
+			list.push({jobId: splitedKey.attributes[3]});
+
+			responseRange = await results.next();
+		}
+
+        return list;
     }
 
     // params[0]: jobId

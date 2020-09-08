@@ -15,8 +15,5 @@
   "bugs": {
     "url": "https://github.com/BLOCKOTUS/register/issues"
   },
-  "homepage": "https://github.com/BLOCKOTUS/register#readme",
-  "dependencies": {
-    "fabric-network": "^2.2.0"
-  }
+  "homepage": "https://github.com/BLOCKOTUS/register#readme"
 }

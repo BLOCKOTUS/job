@@ -7,7 +7,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const { getContractAndGateway } = require('../../../../helper/fabric/helper/javascript');
+const { getContractAndGateway } = require('../../helper/api');
+
+const WALLET_PATH = path.join(__dirname, '..', '..', '..', 'wallet');
 
 async function create({
 	type,
@@ -19,7 +21,7 @@ async function create({
 	// Submit the specified transafalsection.
 	return new Promise(async (resolve, reject) => {
 		// create wallet
-		const walletPath = path.join(__dirname, '../../../../../wallet', `${user.username}.id`);
+		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
 		fs.writeFileSync(walletPath, JSON.stringify(user.wallet))
 
 		// get contract, submit transaction and disconnect
@@ -51,7 +53,7 @@ async function list({
 	// Submit the specified transafalsection.
 	return new Promise(async (resolve, reject) => {
 		// create wallet
-		const walletPath = path.join(__dirname, '../../../../../wallet', `${user.username}.id`);
+		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
 		fs.writeFileSync(walletPath, JSON.stringify(user.wallet))
 
 		// get contract, submit transaction and disconnect
@@ -83,7 +85,7 @@ async function get({
 	// Submit the specified transafalsection.
 	return new Promise(async (resolve, reject) => {
 		// create wallet
-		const walletPath = path.join(__dirname, '../../../../../wallet', `${user.username}.id`);
+		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
 		fs.writeFileSync(walletPath, JSON.stringify(user.wallet))
 
 		// get contract, submit transaction and disconnect
@@ -115,7 +117,7 @@ async function complete({
 }) {
 	return new Promise(async (resolve, reject) => {
 		// create wallet
-		const walletPath = path.join(__dirname, '../../../../../wallet', `${user.username}.id`);
+		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
 		fs.writeFileSync(walletPath, JSON.stringify(user.wallet))
 
 		// get contract, submit transaction and disconnect

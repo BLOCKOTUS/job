@@ -28,6 +28,8 @@ async function create({
 		const {contract, gateway} = await 
 			getContractAndGateway({username: user.username, chaincode: 'job', contract: 'Job'})
 				.catch(reject);
+
+		if (!contract || !gateway) return;
 		
 		// submit transaction
 		const rawWorkers = await 
@@ -35,12 +37,14 @@ async function create({
 				.submitTransaction('createJob', type, data, chaincode, key)
 				.catch(reject);
 
-		const workers = JSON.parse(rawWorkers.toString('utf8'))
-		console.log('Transaction has been submitted');
-
 		//disconnect
 		await gateway.disconnect();
 
+		if (!rawWorkers) return;
+
+		const workers = JSON.parse(rawWorkers.toString('utf8'))
+		
+		console.log('Transaction has been submitted');
 		resolve(workers);
 		return;
     })
@@ -63,6 +67,8 @@ async function list({
 			getContractAndGateway({username: user.username, chaincode: 'job', contract: 'Job'})
 				.catch(reject);
 
+		if (!contract || !gateway) return;
+
 		var rawJobs, jobs;
 		
 		// submit transaction
@@ -71,9 +77,6 @@ async function list({
 				contract
 					.submitTransaction('listJobs', status)
 					.catch(reject);
-
-			jobs = JSON.parse(rawJobs.toString('utf8'))
-			console.log('Transaction has been submitted');
 		}
 
 		if(chaincode && key && !status){
@@ -81,13 +84,15 @@ async function list({
 				contract
 					.submitTransaction('listJobByChaincodeAndKey', chaincode, key)
 					.catch(reject);
-
-			jobs = JSON.parse(rawJobs.toString('utf8'))
-			console.log('Transaction has been submitted');
 		}
-		
+				
 		//disconnect
 		await gateway.disconnect();
+				
+		if (!rawJobs) return;
+
+		jobs = JSON.parse(rawJobs.toString('utf8'))
+		console.log('Transaction has been submitted');
 
 		resolve(jobs);
 		return;
@@ -108,6 +113,8 @@ async function get({
 		const {contract, gateway} = await 
 			getContractAndGateway({username: user.username, chaincode: 'job', contract: 'Job'})
 				.catch(reject);
+
+		if (!contract || !gateway) return;
 		
 		// submit transaction
 		const rawJob = await 
@@ -115,12 +122,14 @@ async function get({
 				.submitTransaction('getJob', jobId)
 				.catch(reject);
 				
-		const job = JSON.parse(rawJob.toString('utf8'))
-		console.log('Transaction has been submitted');
-		
 		//disconnect
 		await gateway.disconnect();
 
+		if (!rawJob) return;
+
+		const job = JSON.parse(rawJob.toString('utf8'));
+
+		console.log('Transaction has been submitted');
 		resolve(job);
 		return;
     })
@@ -140,18 +149,20 @@ async function complete({
 		const {contract, gateway} = await 
 			getContractAndGateway({username: user.username, chaincode: 'job', contract: 'Job'})
 				.catch(reject);
+
+		if (!contract || !gateway) return;
 		
 		// submit transaction
 		const transaction = await 
 			contract
 				.submitTransaction('completeJob', jobId, result)
 				.catch(reject);
-
-		console.log('Transaction has been submitted');
 		
 		//disconnect
 		await gateway.disconnect();
 
+		if (!transaction) return;
+		console.log('Transaction has been submitted');
 		resolve();
 		return;
     })

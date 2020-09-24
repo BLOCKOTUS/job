@@ -16,13 +16,14 @@ async function create({
 	data,
 	chaincode,
 	key,
-	user
+	user,
 }) {
 	// Submit the specified transafalsection.
+	/* eslint-disable-next-line no-async-promise-executor */ /* eslint-disable-next-line no-undef */
 	return new Promise(async (resolve, reject) => {
 		// create wallet
 		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
-		fs.writeFileSync(walletPath, JSON.stringify(user.wallet))
+		fs.writeFileSync(walletPath, JSON.stringify(user.wallet));
 
 		// get contract, submit transaction and disconnect
 		const {contract, gateway} = await 
@@ -42,25 +43,26 @@ async function create({
 
 		if (!rawWorkers) return;
 
-		const workers = JSON.parse(rawWorkers.toString('utf8'))
+		const workers = JSON.parse(rawWorkers.toString('utf8'));
 		
 		console.log('Transaction has been submitted');
 		resolve(workers);
 		return;
-    })
+  });
 }
 
 async function list({
 	status,
 	chaincode,
 	key,
-	user
+	user,
 }) {
 	// Submit the specified transafalsection.
+	/* eslint-disable-next-line no-async-promise-executor */ /* eslint-disable-next-line no-undef */
 	return new Promise(async (resolve, reject) => {
 		// create wallet
 		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
-		fs.writeFileSync(walletPath, JSON.stringify(user.wallet))
+		fs.writeFileSync(walletPath, JSON.stringify(user.wallet));
 
 		// get contract, submit transaction and disconnect
 		const {contract, gateway} = await 
@@ -91,23 +93,24 @@ async function list({
 				
 		if (!rawJobs) return;
 
-		jobs = JSON.parse(rawJobs.toString('utf8'))
+		jobs = JSON.parse(rawJobs.toString('utf8'));
 		console.log('Transaction has been submitted');
 
 		resolve(jobs);
 		return;
-    })
+  });
 }
 
 async function get({
 	jobId,
-	user
+	user,
 }) {
 	// Submit the specified transafalsection.
+	/* eslint-disable-next-line no-async-promise-executor */ /* eslint-disable-next-line no-undef */
 	return new Promise(async (resolve, reject) => {
 		// create wallet
 		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
-		fs.writeFileSync(walletPath, JSON.stringify(user.wallet))
+		fs.writeFileSync(walletPath, JSON.stringify(user.wallet));
 
 		// get contract, submit transaction and disconnect
 		const {contract, gateway} = await 
@@ -132,18 +135,19 @@ async function get({
 		console.log('Transaction has been submitted');
 		resolve(job);
 		return;
-    })
+    });
 }
 
 async function complete({
 	jobId,
 	result,
-	user
+	user,
 }) {
+	/* eslint-disable-next-line no-async-promise-executor */ /* eslint-disable-next-line no-undef */
 	return new Promise(async (resolve, reject) => {
 		// create wallet
 		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
-		fs.writeFileSync(walletPath, JSON.stringify(user.wallet))
+		fs.writeFileSync(walletPath, JSON.stringify(user.wallet));
 
 		// get contract, submit transaction and disconnect
 		const {contract, gateway} = await 
@@ -165,12 +169,12 @@ async function complete({
 		console.log('Transaction has been submitted');
 		resolve();
 		return;
-    })
+    });
 }
 
 module.exports = {
 	create,
 	list,
 	complete,
-	get
-}
+	get,
+};

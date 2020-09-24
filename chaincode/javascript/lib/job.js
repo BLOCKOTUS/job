@@ -12,7 +12,7 @@ const COMPLETE = 'complete';
 class Job extends Contract {
   // "PRIVATE"
 
-  async initLedger(ctx) {
+  async initLedger() {
     
   }
 
@@ -29,12 +29,12 @@ class Job extends Contract {
 
   async getTimestamp(ctx) {
     const rawTs = await ctx.stub.invokeChaincode("helper", ["getTimestamp"], "mychannel");
-    if (rawTs.status !== 200) throw new Error(rawId.message);
+    if (rawTs.status !== 200) throw new Error(rawTs.message);
     
     return rawTs.payload.toString('utf8');
   }
 
-  getCountPerType(type) {
+  getCountPerType(_type) {
     return "3";
   }
 
@@ -42,24 +42,28 @@ class Job extends Contract {
     const rawJob = await ctx.stub.getState(jobId);
     const job = rawJob.toString();
 
-    console.log('==== job: ====', JSON.stringify(job))
+    console.log('==== job: ====', JSON.stringify(job));
     
     return job;
   }
 
   async createCompositeKeyForWorkers(ctx, workersIds, status, jobId) {
+    /* eslint-disable-next-line no-undef */
     return new Promise((r) => {
       let promisesWorker = workersIds.map(worker => ctx.stub.createCompositeKey('workerId~status~jobId', [worker._id, status, jobId]));
       let promisesJob = workersIds.map(worker => ctx.stub.createCompositeKey('jobId~status~workerId', [jobId, status, worker._id]));
-      Promise.all([...promisesWorker, ...promisesJob]).then(r).catch(console.log)
-    })
+      /* eslint-disable-next-line no-undef */
+      Promise.all([...promisesWorker, ...promisesJob]).then(r).catch(console.log);
+    });
   }
 
   async putCompositeKeyForWorkers(ctx, workers) {
+    /* eslint-disable-next-line no-undef */
     return new Promise((r) => {
       let promises = workers.map(i => ctx.stub.putState(i, Buffer.from('\u0000')));
-      Promise.all(promises).then(r).catch(console.log)
-    })
+      /* eslint-disable-next-line no-undef */
+      Promise.all(promises).then(r).catch(console.log);
+    });
   }
 
   async getJobResults(ctx, jobId) {
@@ -70,7 +74,7 @@ class Job extends Contract {
     while (!responseRange.done) {
       if (!responseRange || !responseRange.value || !responseRange.value.key) return formattedResults;
 
-      let splitedKey = await ctx.stub.splitCompositeKey(responseRange.value.key)
+      let splitedKey = await ctx.stub.splitCompositeKey(responseRange.value.key);
       list.push({ resultId: splitedKey.attributes[1] });
 
       responseRange = await results.next();
@@ -80,21 +84,23 @@ class Job extends Contract {
 
     if(list.length === 0) return formattedResults;
 
+    /* eslint-disable-next-line no-undef */
     return new Promise((res, rej) => {
+      /* eslint-disable-next-line no-undef */
       Promise
         .all(promises)
         .then(resultsValues => {
           resultsValues.forEach(r => {
             var resultValue = JSON.parse(r.toString());
             formattedResults[resultValue.result] ? formattedResults[resultValue.result] = formattedResults[resultValue.result] + 1 : formattedResults[resultValue.result] = 1;
-          })
+          });
           res(formattedResults);
         })
         .catch(e => {
-          rej(e)
-          throw new Error(e)
-        })
-    })
+          rej(e);
+          throw new Error(e);
+        });
+    });
   } 
 
   // "PUBLIC"
@@ -116,8 +122,8 @@ class Job extends Contract {
       data: params[1],
       chaincode: params[2],
       key: params[3],
-      creator: id
-    }
+      creator: id,
+    };
 
     await ctx.stub.putState(jobId, Buffer.from(JSON.stringify(value)));
     
@@ -160,7 +166,7 @@ class Job extends Contract {
     while (!responseRange.done) {
       if (!responseRange || !responseRange.value || !responseRange.value.key) return;
 
-      let splitedKey = await ctx.stub.splitCompositeKey(responseRange.value.key)
+      let splitedKey = await ctx.stub.splitCompositeKey(responseRange.value.key);
       list.push({jobId: splitedKey.attributes[2], status: splitedKey.attributes[1]});
 
       responseRange = await results.next();

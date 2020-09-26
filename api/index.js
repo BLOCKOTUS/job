@@ -45,7 +45,6 @@ async function create({
 
 		const workers = JSON.parse(rawWorkers.toString('utf8'));
 		
-		console.log('Transaction has been submitted');
 		resolve(workers);
 		return;
   });
@@ -94,8 +93,6 @@ async function list({
 		if (!rawJobs) return;
 
 		jobs = JSON.parse(rawJobs.toString('utf8'));
-		console.log('Transaction has been submitted');
-
 		resolve(jobs);
 		return;
   });
@@ -131,8 +128,6 @@ async function get({
 		if (!rawJob) return;
 
 		const job = JSON.parse(rawJob.toString('utf8'));
-
-		console.log('Transaction has been submitted');
 		resolve(job);
 		return;
     });
@@ -166,7 +161,6 @@ async function complete({
 		await gateway.disconnect();
 
 		if (!transaction) return;
-		console.log('Transaction has been submitted');
 		resolve();
 		return;
     });

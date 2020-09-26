@@ -40,8 +40,9 @@ class Job extends Contract {
 
   async getJobById(ctx, jobId){
     const rawJob = await ctx.stub.getState(jobId);
+    if (!rawJob || rawJob.length === 0) throw new Error(`${jobId} does not exist`);
+    
     const job = rawJob.toString();
-
     console.log('==== job: ====', JSON.stringify(job));
     
     return job;

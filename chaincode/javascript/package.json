@@ -16,5 +16,8 @@
 	"dependencies": {
 		"fabric-contract-api": "^2.2.0",
 		"fabric-shim": "^2.2.0"
+	},
+	"resolutions": {
+		"class-transformer": "^0.3.1"
 	}
 }

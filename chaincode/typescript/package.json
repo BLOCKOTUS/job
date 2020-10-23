@@ -1,5 +1,5 @@
 {
-    "name": "blockotus-organ-job-chaincode",
+    "name": "blockotus-organ-job-chaincode-typescript",
     "version": "0.1.7-beta",
     "description": "job chaincode implemented in node.js",
     "main": "dist/index.js",

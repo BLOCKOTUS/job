@@ -6,6 +6,27 @@
 
 import { Context, Contract } from 'fabric-contract-api';
 
+type CreatorId = string;
+
+type JobId = string;
+
+type JobType = {
+    chaincode: string;
+    creator: string;
+    data: string;
+    key: string;
+    type: string;
+}
+
+type JobStatus = 'pending' | 'complete';
+
+type Worker = {
+    _id: string;
+    publicKey: string;
+};
+
+type Workers = Array<Worker>;
+
 const PENDING = 'pending';
 const COMPLETE = 'complete';
 
@@ -15,19 +36,21 @@ export class Job extends Contract {
         console.log('initLedger');
     }
 
-    // @ params[0]: type = 'confirmation'
-    // @ params[1]: data
-    // @ params[2]: chaincode
-    // @ params[3]: key
+    /**
+    * @param {string} type = 'confirmation'
+    * @param {string} data
+    * @param {string} chaincode
+    * @param {string} key
+    */
     public async createJob(ctx: Context) {
         const args = ctx.stub.getFunctionAndParameters();
         const params = args.params;
         this.validateParams(params, 4);
 
-        const id = await this.getCreatorId(ctx);
-        const jobId = `${id}||${await this.getTimestamp(ctx)}`;
+        const id: CreatorId = await this.getCreatorId(ctx);
+        const jobId: JobId = `${id}||${await this.getTimestamp(ctx)}`;
 
-        const value = {
+        const value: JobType = {
             chaincode: params[2],
             creator: id,
             data: params[1],
@@ -55,15 +78,17 @@ export class Job extends Contract {
         console.log('====== workersIds count ========', workersIds.length);
 
         // notify them
-        const workers = await this.createCompositeKeyForWorkers(ctx, workersIds, PENDING, jobId);
-        await this.putCompositeKeyForWorkers(ctx, workers);
+        const workersCompositeKeys = await this.createCompositeKeyForWorkers(ctx, workersIds, PENDING, jobId);
+        await this.putCompositeKeyForWorkers(ctx, workersCompositeKeys);
 
         console.info(`=== created ${JSON.stringify(value)} ===`);
 
         return {workersIds, jobId};
     }
 
-    // params[0]: status
+    /**
+    * @param {string} status
+    */
     public async listJobs(ctx: Context) {
         const args = ctx.stub.getFunctionAndParameters();
         const params = args.params;
@@ -88,7 +113,9 @@ export class Job extends Contract {
         return list;
     }
 
-    // params[0]: jobId
+    /**
+    * @param {string} jobId
+    */
     public async getJob(ctx: Context) {
         const args = ctx.stub.getFunctionAndParameters();
         const params = args.params;
@@ -100,8 +127,10 @@ export class Job extends Contract {
         return job;
     }
 
-    // params[0]: chaincode
-    // params[1]: key
+    /**
+    * @param {string} chaincode
+    * @param {string} key
+    */
     public async listJobByChaincodeAndKey(ctx: Context) {
         const args = ctx.stub.getFunctionAndParameters();
         const params = args.params;
@@ -129,8 +158,10 @@ export class Job extends Contract {
         return list;
     }
 
-    // params[0]: jobId
-    // params[1]: result
+    /**
+    * @param {string} jobId
+    * @param {string} result
+    */
     public async completeJob(ctx: Context) {
         const args = ctx.stub.getFunctionAndParameters();
         const params = args.params;
@@ -142,7 +173,8 @@ export class Job extends Contract {
 
         // verify that the creator has this jobId assigned
         const existing = await ctx.stub.getStateByPartialCompositeKey('workerId~status~jobId', [id, PENDING, jobId]);
-        if (existing.response.results.length === 0) { throw new Error(`${jobId} is not assigned to the creator.`); }
+        const response = await existing.next();
+        if (response.done) { throw new Error(`${jobId} is not assigned to the creator.`); }
 
         // delete pending task
         const indexToDeleteWorker = await ctx.stub.createCompositeKey('workerId~status~jobId', [id, PENDING, jobId]);
@@ -167,7 +199,11 @@ export class Job extends Contract {
         await ctx.stub.putState(indexResult, Buffer.from('\u0000'));
     }
 
-    public async getJobResults(ctx: Context, jobId) {
+    /**
+    * @param {Context} ctx
+    * @param {string} jobId
+    */
+    public async getJobResults(ctx: Context, jobId: JobId) {
         const list = [];
         const formattedResults = {};
         const results = await ctx.stub.getStateByPartialCompositeKey('jobId~resultId', [jobId]);
@@ -185,9 +221,7 @@ export class Job extends Contract {
 
         if (list.length === 0) { return formattedResults; }
 
-        /* eslint-disable-next-line no-undef */
         return new Promise((res, rej) => {
-            /* eslint-disable-next-line no-undef */
             Promise
             .all(promises)
             .then((resultsValues) => {
@@ -206,29 +240,33 @@ export class Job extends Contract {
         });
     }
 
-    private validateParams(params, count) {
+    private validateParams(params: Array<string>, count: number): void {
         if (params.length !== count) { throw new Error(`Incorrect number of arguments. Expecting ${count}. Args: ${JSON.stringify(params)}`); }
     }
 
-    private async getCreatorId(ctx: Context) {
+    private async getCreatorId(ctx: Context): Promise<string> {
         const rawId = await ctx.stub.invokeChaincode('helper', ['getCreatorId'], 'mychannel');
         if (rawId.status !== 200) { throw new Error(rawId.message); }
 
         return rawId.payload.toString();
     }
 
-    private async getTimestamp(ctx: Context) {
+    private async getTimestamp(ctx: Context): Promise<string> {
         const rawTs = await ctx.stub.invokeChaincode('helper', ['getTimestamp'], 'mychannel');
         if (rawTs.status !== 200) { throw new Error(rawTs.message); }
 
         return rawTs.payload.toString();
     }
 
-    private getCountPerType(type) {
+    private getCountPerType(type: string): string {
         if (type) { return '3'; }
     }
 
-    private async getJobById(ctx: Context, jobId) {
+    /**
+    * @param {Context} ctx
+    * @param {JobId} jobId
+    */
+    private async getJobById(ctx: Context, jobId: JobId) {
         const rawJob = await ctx.stub.getState(jobId);
         if (!rawJob || rawJob.length === 0) { throw new Error(`${jobId} does not exist`); }
 
@@ -238,8 +276,18 @@ export class Job extends Contract {
         return job;
     }
 
-    private async createCompositeKeyForWorkers(ctx: Context, workersIds, status, jobId) {
-        /* eslint-disable-next-line no-undef */
+    /**
+    * @param {Context} ctx
+    * @param {Workers} workersIds
+    * @param {JobStatus} status
+    * @param {JobId} jobId
+    */
+    private async createCompositeKeyForWorkers(
+        ctx: Context, 
+        workersIds: Workers, 
+        status: JobStatus, 
+        jobId: JobId
+    ): Promise<Array<string>> {
         return new Promise((r) => {
             const promisesWorker = workersIds.map((worker) => ctx.stub.createCompositeKey(
                 'workerId~status~jobId',
@@ -249,16 +297,17 @@ export class Job extends Contract {
                 'jobId~status~workerId',
                 [jobId, status, worker._id],
             ));
-            /* eslint-disable-next-line no-undef */
             Promise.all([...promisesWorker, ...promisesJob]).then(r).catch(console.log);
         });
     }
 
-    private async putCompositeKeyForWorkers(ctx: Context, workers) {
-        /* eslint-disable-next-line no-undef */
+    /**
+    * @param {Context} ctx
+    * @param {Array<string>} workers
+    */
+    private async putCompositeKeyForWorkers(ctx: Context, workersCompositeKeys: Array<string>): Promise<void[]> {
         return new Promise((r) => {
-            const promises = workers.map((i) => ctx.stub.putState(i, Buffer.from('\u0000')));
-            /* eslint-disable-next-line no-undef */
+            const promises = workersCompositeKeys.map((i) => ctx.stub.putState(i, Buffer.from('\u0000')));
             Promise.all(promises).then(r).catch(console.log);
         });
     }

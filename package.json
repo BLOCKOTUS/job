@@ -1,6 +1,6 @@
 {
   "name": "blockotus-organ-job",
-  "version": "0.2.0-alpha",
+  "version": "0.2.3-alpha",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,8 @@
     "url": "git+https://github.com/BLOCKOTUS/job.git"
   },
   "author": "Daniel Febrero",
-  "license": "Daniel Febrero",
+  "license": "AGPL-3.0",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/BLOCKOTUS/job/issues"
   },

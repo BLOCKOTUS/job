@@ -1,25 +1,21 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
+import fs from 'fs';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-'use strict';
+import { getContractAndGateway } from '../../helper/api/index.js';
 
-const fs = require('fs');
-const path = require('path');
-
-const { getContractAndGateway } = require('../../helper/api');
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const WALLET_PATH = path.join(__dirname, '..', '..', '..', 'wallet');
 
-async function create({
+export const create = async ({
 	type,
 	data,
 	chaincode,
 	key,
 	user,
-}) {
+}) => {
 	// Submit the specified transafalsection.
-	/* eslint-disable-next-line no-async-promise-executor */ /* eslint-disable-next-line no-undef */
 	return new Promise(async (resolve, reject) => {
 		// create wallet
 		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
@@ -48,16 +44,15 @@ async function create({
 		resolve(workers);
 		return;
   });
-}
+};
 
-async function list({
+export const list = async ({
 	status,
 	chaincode,
 	key,
 	user,
-}) {
+}) => {
 	// Submit the specified transafalsection.
-	/* eslint-disable-next-line no-async-promise-executor */ /* eslint-disable-next-line no-undef */
 	return new Promise(async (resolve, reject) => {
 		// create wallet
 		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
@@ -96,14 +91,13 @@ async function list({
 		resolve(jobs);
 		return;
   });
-}
+};
 
-async function get({
+export const get = async ({
 	jobId,
 	user,
-}) {
+}) => {
 	// Submit the specified transafalsection.
-	/* eslint-disable-next-line no-async-promise-executor */ /* eslint-disable-next-line no-undef */
 	return new Promise(async (resolve, reject) => {
 		// create wallet
 		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
@@ -131,14 +125,13 @@ async function get({
 		resolve(job);
 		return;
     });
-}
+};
 
-async function complete({
+export const complete = async ({
 	jobId,
 	result,
 	user,
-}) {
-	/* eslint-disable-next-line no-async-promise-executor */ /* eslint-disable-next-line no-undef */
+}) => {
 	return new Promise(async (resolve, reject) => {
 		// create wallet
 		const walletPath = path.join(WALLET_PATH, `${user.username}.id`);
@@ -164,11 +157,4 @@ async function complete({
 		resolve();
 		return;
     });
-}
-
-module.exports = {
-	create,
-	list,
-	complete,
-	get,
 };

@@ -12,6 +12,8 @@
   },
   "rules": {
     "semi": "error",
+    "no-async-promise-executor": 0,
+    "no-undef": 0,
     "new-cap": [
       2,
       {

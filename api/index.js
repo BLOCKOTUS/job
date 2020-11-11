@@ -5,6 +5,10 @@ import { getContractAndGateway } from '../../helper/api/index.minified.js';
 
 const WALLET_PATH = path.join(__dirname, '..', '..', '..', 'wallet');
 
+/**
+ * Creates a job on the network.
+ * Each job contain `data` and refers to a `chaincode` and a `key`.
+ */
 export const create = async ({
 	type,
 	data,
@@ -43,6 +47,10 @@ export const create = async ({
   });
 };
 
+/**
+ * List jobs attributed to the user.
+ * They can be filtered by `status`, `chaincode`, and `key`.
+ */
 export const list = async ({
 	status,
 	chaincode,
@@ -90,6 +98,9 @@ export const list = async ({
   });
 };
 
+/**
+ * Get a job from the network, by `jobId`.
+ */
 export const get = async ({
 	jobId,
 	user,
@@ -124,6 +135,10 @@ export const get = async ({
     });
 };
 
+/**
+ * Complete a job on the network.
+ * It will mark the job as `complete` and post the `result` on the network.
+ */
 export const complete = async ({
 	jobId,
 	result,

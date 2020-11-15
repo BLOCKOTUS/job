@@ -1,7 +1,7 @@
 {
   "name": "blockotus-organ-job",
-  "version": "0.2.3-alpha",
-  "description": "",
+  "version": "0.2.4-alpha",
+  "description": "Hyperledger Fabric Chaincode. BLOCKOTUS Organ. Network Open Standard.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

@@ -1,12 +1,12 @@
 {
   "name": "blockotus-organ-job",
-  "version": "0.2.4-alpha",
+  "version": "0.2.5-alpha",
   "description": "Hyperledger Fabric Chaincode. BLOCKOTUS Organ. Network Open Standard.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ./",
-    "build": "rm -f api/*.minified.js && babel api/*.js -d api/ --out-file-extension .minified.js"
+    "lint": "tslint -c tslint.json './api/lib/*.ts'  -e './node_modules/**'",
+    "build": "rm -rf api/dist/* && babel api/lib/*.ts -d api/dist --extensions '.ts'"
   },
   "repository": {
     "type": "git",
@@ -25,10 +25,10 @@
     "@babel/cli": "^7.12.1",
     "@babel/core": "^7.12.3",
     "@babel/preset-env": "^7.12.1",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.9.0",
-    "eslint-plugin-flowtype": "^5.2.0",
-    "husky": "^4.3.0"
+    "@babel/preset-typescript": "^7.12.1",
+    "husky": "^4.3.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
   },
   "dependencies": {
     "core-js": "^3.7.0"

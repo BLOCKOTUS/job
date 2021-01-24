@@ -21,7 +21,7 @@ var _fs = _interopRequireDefault(require("fs"));
 
 var _path = _interopRequireDefault(require("path"));
 
-var _indexMinified = require("../../helper/api/index.minified.js");
+var _index = require("../../../helper/api/dist/index.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -29,7 +29,12 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var WALLET_PATH = _path["default"].join(__dirname, '..', '..', '..', 'wallet');
+var WALLET_PATH = _path["default"].join(__dirname, '..', '..', '..', '..', 'wallet');
+/**
+ * Creates a job on the network.
+ * Each job contain `data` and refers to a `chaincode` and a `key`.
+ */
+
 
 var create = /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref) {
@@ -54,7 +59,7 @@ var create = /*#__PURE__*/function () {
 
 
                         _context.next = 4;
-                        return (0, _indexMinified.getContractAndGateway)({
+                        return (0, _index.getContractAndGateway)({
                           username: user.username,
                           chaincode: 'job',
                           contract: 'Job'
@@ -119,6 +124,11 @@ var create = /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }();
+/**
+ * List jobs attributed to the user.
+ * They can be filtered by `status`, `chaincode`, and `key`.
+ */
+
 
 exports.create = create;
 
@@ -145,7 +155,7 @@ var list = /*#__PURE__*/function () {
 
 
                         _context3.next = 4;
-                        return (0, _indexMinified.getContractAndGateway)({
+                        return (0, _index.getContractAndGateway)({
                           username: user.username,
                           chaincode: 'job',
                           contract: 'Job'
@@ -229,6 +239,10 @@ var list = /*#__PURE__*/function () {
     return _ref5.apply(this, arguments);
   };
 }();
+/**
+ * Get a job from the network, by `jobId`.
+ */
+
 
 exports.list = list;
 
@@ -255,7 +269,7 @@ var get = /*#__PURE__*/function () {
 
 
                         _context5.next = 4;
-                        return (0, _indexMinified.getContractAndGateway)({
+                        return (0, _index.getContractAndGateway)({
                           username: user.username,
                           chaincode: 'job',
                           contract: 'Job'
@@ -320,6 +334,11 @@ var get = /*#__PURE__*/function () {
     return _ref8.apply(this, arguments);
   };
 }();
+/**
+ * Complete a job on the network.
+ * It will mark the job as `complete` and post the `result` on the network.
+ */
+
 
 exports.get = get;
 
@@ -346,7 +365,7 @@ var complete = /*#__PURE__*/function () {
 
 
                         _context7.next = 4;
-                        return (0, _indexMinified.getContractAndGateway)({
+                        return (0, _index.getContractAndGateway)({
                           username: user.username,
                           chaincode: 'job',
                           contract: 'Job'

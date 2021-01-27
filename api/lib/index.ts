@@ -27,21 +27,21 @@ export const create = async ({
       getContractAndGateway({username: user.username, chaincode: 'job', contract: 'Job'})
         .catch(reject);
 
-    if (!contract || !gateway) return;
-    
+    if (!contract || !gateway) { return; }
+
     // submit transaction
-    const rawWorkers = await 
+    const rawWorkers = await
       contract
         .submitTransaction('createJob', type, data, chaincode, key)
         .catch(reject);
 
-    //disconnect
+    // disconnect
     await gateway.disconnect();
 
-    if (!rawWorkers) return;
+    if (!rawWorkers) { return; }
 
     const workers = JSON.parse(rawWorkers.toString('utf8'));
-    
+
     resolve(workers);
     return;
   });
@@ -64,14 +64,15 @@ export const list = async ({
     fs.writeFileSync(walletPath, JSON.stringify(user.wallet));
 
     // get contract, submit transaction and disconnect
-    const {contract, gateway} = await 
+    const {contract, gateway} = await
       getContractAndGateway({username: user.username, chaincode: 'job', contract: 'Job'})
         .catch(reject);
 
-    if (!contract || !gateway) return;
+    if (!contract || !gateway) { return; }
 
-    var rawJobs, jobs;
-    
+    let rawJobs;
+    let jobs;
+
     // submit transaction
     if(status){
       rawJobs = await
@@ -86,11 +87,11 @@ export const list = async ({
           .submitTransaction('listJobByChaincodeAndKey', chaincode, key)
           .catch(reject);
     }
-        
-    //disconnect
+
+    // disconnect
     await gateway.disconnect();
-        
-    if (!rawJobs) return;
+
+    if (!rawJobs) { return; }
 
     jobs = JSON.parse(rawJobs.toString('utf8'));
     resolve(jobs);
@@ -112,22 +113,22 @@ export const get = async ({
     fs.writeFileSync(walletPath, JSON.stringify(user.wallet));
 
     // get contract, submit transaction and disconnect
-    const {contract, gateway} = await 
+    const {contract, gateway} = await
       getContractAndGateway({username: user.username, chaincode: 'job', contract: 'Job'})
         .catch(reject);
 
-    if (!contract || !gateway) return;
-    
+    if (!contract || !gateway) { return; }
+
     // submit transaction
-    const rawJob = await 
+    const rawJob = await
       contract
         .submitTransaction('getJob', jobId)
         .catch(reject);
-        
-    //disconnect
+
+    // disconnect
     await gateway.disconnect();
 
-    if (!rawJob) return;
+    if (!rawJob) { return; }
 
     const job = JSON.parse(rawJob.toString('utf8'));
     resolve(job);
@@ -150,22 +151,22 @@ export const complete = async ({
     fs.writeFileSync(walletPath, JSON.stringify(user.wallet));
 
     // get contract, submit transaction and disconnect
-    const {contract, gateway} = await 
+    const {contract, gateway} = await
       getContractAndGateway({username: user.username, chaincode: 'job', contract: 'Job'})
         .catch(reject);
 
-    if (!contract || !gateway) return;
-    
+    if (!contract || !gateway) { return; }
+
     // submit transaction
-    const transaction = await 
+    const transaction = await
       contract
         .submitTransaction('completeJob', jobId, result)
         .catch(reject);
-    
-    //disconnect
+
+    // disconnect
     await gateway.disconnect();
 
-    if (!transaction) return;
+    if (!transaction) { return; }
     resolve();
     return;
     });

@@ -1,21 +1,21 @@
 "use strict";
 
-require("core-js/modules/es.array.join");
+require("core-js/modules/es.array.join.js");
 
-require("core-js/modules/es.date.to-string");
+require("core-js/modules/es.date.to-string.js");
 
-require("core-js/modules/es.object.to-string");
+require("core-js/modules/es.object.to-string.js");
 
-require("core-js/modules/es.promise");
+require("core-js/modules/es.promise.js");
 
-require("core-js/modules/es.regexp.to-string");
+require("core-js/modules/es.regexp.to-string.js");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.complete = exports.get = exports.list = exports.create = void 0;
 
-require("regenerator-runtime/runtime");
+require("regenerator-runtime/runtime.js");
 
 var _fs = _interopRequireDefault(require("fs"));
 

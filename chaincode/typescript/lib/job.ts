@@ -4,7 +4,8 @@
 
 'use strict';
 
-import { Context, Contract } from 'fabric-contract-api';
+import { Context } from 'fabric-contract-api';
+import { BlockotusContract } from 'hyperledger-fabric-chaincode-helper';
 
 type CreatorId = string;
 
@@ -39,7 +40,7 @@ type Workers = Array<Worker>;
 const PENDING = 'pending';
 const COMPLETE = 'complete';
 
-export class Job extends Contract {
+export class Job extends BlockotusContract {
 
     public async initLedger() {
         console.log('initLedger');
@@ -59,8 +60,8 @@ export class Job extends Contract {
         this.validateParams(params, 4);
 
         // construct job object
-        const id: CreatorId = await this.getCreatorId(ctx);
-        const jobId: JobId = `${id}||${await this.getTimestamp(ctx)}`;
+        const id: CreatorId = this.getUniqueClientId(ctx);
+        const jobId: JobId = `${id}||${this.getTimestamp(ctx)}`;
 
         const value: JobType = {
             chaincode: params[2],
@@ -106,7 +107,7 @@ export class Job extends Contract {
         this.validateParams(params, 1);
 
         // get creatorId and status param
-        const id = await this.getCreatorId(ctx);
+        const id = this.getUniqueClientId(ctx);
         const status = params[0];
 
         // retrieve the matching jobs from the ledger
@@ -154,7 +155,7 @@ export class Job extends Contract {
         this.validateParams(params, 2);
 
         // get `cretorId`, and `chaincode` and `key` param
-        const id = await this.getCreatorId(ctx);
+        const id = this.getUniqueClientId(ctx);
         const chaincode = params[0];
         const key = params[1];
 
@@ -186,7 +187,7 @@ export class Job extends Contract {
         this.validateParams(params, 2);
 
         // get `creatorId`, and `jobId` and `result` param
-        const id = await this.getCreatorId(ctx);
+        const id = this.getUniqueClientId(ctx);
         const jobId = params[0];
         const result = params[1];
 
@@ -203,7 +204,7 @@ export class Job extends Contract {
 
         // construct value object and put it on the ledger
         const value = {result, jobId, workerId: id};
-        const resultId = `${id}||${params[0]}||${await this.getTimestamp(ctx)}`;
+        const resultId = `${id}||${params[0]}||${this.getTimestamp(ctx)}`;
         await ctx.stub.putState(resultId, Buffer.from(JSON.stringify(value)));
 
         // put an index corresponding the the creatorId and the jobId
@@ -270,26 +271,6 @@ export class Job extends Contract {
      */
     private validateParams(params: Array<string>, count: number): void {
         if (params.length !== count) { throw new Error(`Incorrect number of arguments. Expecting ${count}. Args: ${JSON.stringify(params)}`); }
-    }
-
-    /**
-     * Get the creatorId (transaction submitter unique id) from the Helper organ.
-     */
-    private async getCreatorId(ctx: Context): Promise<string> {
-        const rawId = await ctx.stub.invokeChaincode('helper', ['getCreatorId'], 'mychannel');
-        if (rawId.status !== 200) { throw new Error(rawId.message); }
-
-        return rawId.payload.toString();
-    }
-
-    /**
-     * Get the timestamp from the Helper organ.
-     */
-    private async getTimestamp(ctx: Context): Promise<string> {
-        const rawTs = await ctx.stub.invokeChaincode('helper', ['getTimestamp'], 'mychannel');
-        if (rawTs.status !== 200) { throw new Error(rawTs.message); }
-
-        return rawTs.payload.toString();
     }
 
     /**

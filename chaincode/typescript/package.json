@@ -1,6 +1,6 @@
 {
     "name": "blockotus-organ-job-chaincode-typescript",
-    "version": "0.1.7-beta",
+    "version": "0.2.6-beta",
     "description": "job chaincode implemented in node.js",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -22,7 +22,7 @@
     "dependencies": {
         "fabric-contract-api": "^2.0.0",
         "fabric-shim": "^2.0.0",
-        "hyperledger-fabric-chaincode-helper": "0.0.10"
+        "hyperledger-fabric-chaincode-helper": "0.0.12"
     },
     "devDependencies": {
         "@types/chai": "^4.1.7",

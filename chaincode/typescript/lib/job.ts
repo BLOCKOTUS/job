@@ -68,9 +68,7 @@ export class Job extends BlockotusContract {
      * @param {string} key
      */
     public async createJob(ctx: Context) {
-        const args = ctx.stub.getFunctionAndParameters();
-        const params = args.params;
-        this.validateParams(params, 4);
+        const params = this.getParams(ctx, { length: 4 });
 
         // construct job object
         const id: CreatorId = this.getUniqueClientId(ctx);
@@ -115,9 +113,7 @@ export class Job extends BlockotusContract {
      * @param {string} status
      */
     public async listJobs(ctx: Context) {
-        const args = ctx.stub.getFunctionAndParameters();
-        const params = args.params;
-        this.validateParams(params, 1);
+        const params = this.getParams(ctx, { length: 1 });
 
         // get creatorId and status param
         const id = this.getUniqueClientId(ctx);
@@ -145,9 +141,7 @@ export class Job extends BlockotusContract {
      * @param {string} jobId
      */
     public async getJob(ctx: Context) {
-        const args = ctx.stub.getFunctionAndParameters();
-        const params = args.params;
-        this.validateParams(params, 1);
+        const params = this.getParams(ctx, { length: 1 });
 
         // retrieve the job
         const jobId = params[0];
@@ -161,9 +155,7 @@ export class Job extends BlockotusContract {
      * @param {string} key
      */
     public async listJobByChaincodeAndKey(ctx: Context) {
-        const args = ctx.stub.getFunctionAndParameters();
-        const params = args.params;
-        this.validateParams(params, 2);
+        const params = this.getParams(ctx, { length: 2 });
 
         // get `cretorId`, and `chaincode` and `key` param
         const id = this.getUniqueClientId(ctx);
@@ -193,9 +185,7 @@ export class Job extends BlockotusContract {
      * @param {string} result
      */
     public async completeJob(ctx: Context) {
-        const args = ctx.stub.getFunctionAndParameters();
-        const params = args.params;
-        this.validateParams(params, 2);
+        const params = this.getParams(ctx, { length: 2 });
 
         // get `creatorId`, and `jobId` and `result` param
         const id = this.getUniqueClientId(ctx);
@@ -271,17 +261,6 @@ export class Job extends BlockotusContract {
                     throw new Error(e);
                 });
         });
-    }
-
-    /**
-     * Validate the params received as arguments by a public functions.
-     * Params are stored in the Context.
-     * 
-     * @param {string[]} params params received by a pubic function
-     * @param {number} count number of params expected
-     */
-    private validateParams(params: Array<string>, count: number): void {
-        if (params.length !== count) { throw new Error(`Incorrect number of arguments. Expecting ${count}. Args: ${JSON.stringify(params)}`); }
     }
 
     /**

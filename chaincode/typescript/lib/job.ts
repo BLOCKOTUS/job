@@ -42,8 +42,21 @@ const COMPLETE = 'complete';
 
 export class Job extends BlockotusContract {
 
+    constructor(...args) {
+        super(...args);
+    }
+
     public async initLedger() {
         console.log('initLedger');
+    }
+
+    /**
+     * Cross-contract invokeChaincode() does not support Parent Contract method as far as I know.
+     * This is why we duplicate the method here.
+     * Because the method is called from Did contract https://github.com/BLOCKOTUS/did
+     */
+    public async did(ctx: Context, subject: string, method: string, data: string): Promise<string> {
+        return this.didRequest(ctx, subject, method, data);
     }
 
     /**
@@ -136,11 +149,9 @@ export class Job extends BlockotusContract {
         const params = args.params;
         this.validateParams(params, 1);
 
-        // retrieve the job from the ledger
+        // retrieve the job
         const jobId = params[0];
-        const job = await this.getJobById(ctx, jobId);
-
-        return job;
+        return await this.didGet(ctx, jobId);
     }
 
     /**
@@ -278,21 +289,6 @@ export class Job extends BlockotusContract {
      */
     private getCountPerType(type: string): string {
         if (type) { return '3'; }
-    }
-
-    /**
-     * Retrieve a job by `jobId`
-     * 
-     * @param {Context} ctx
-     * @param {JobId} jobId
-     */
-    private async getJobById(ctx: Context, jobId: JobId) {
-        const rawJob = await ctx.stub.getState(jobId);
-        if (!rawJob || rawJob.length === 0) { throw new Error(`${jobId} does not exist`); }
-
-        const job = rawJob.toString();
-
-        return job;
     }
 
     /**

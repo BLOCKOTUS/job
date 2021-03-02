@@ -60,7 +60,7 @@ var create = /*#__PURE__*/function () {
 
                         _context.next = 4;
                         return (0, _index.getContractAndGateway)({
-                          username: user.username,
+                          user: user,
                           chaincode: 'job',
                           contract: 'Job'
                         })["catch"](reject);
@@ -156,7 +156,7 @@ var list = /*#__PURE__*/function () {
 
                         _context3.next = 4;
                         return (0, _index.getContractAndGateway)({
-                          username: user.username,
+                          user: user,
                           chaincode: 'job',
                           contract: 'Job'
                         })["catch"](reject);
@@ -270,7 +270,7 @@ var get = /*#__PURE__*/function () {
 
                         _context5.next = 4;
                         return (0, _index.getContractAndGateway)({
-                          username: user.username,
+                          user: user,
                           chaincode: 'job',
                           contract: 'Job'
                         })["catch"](reject);
@@ -366,7 +366,7 @@ var complete = /*#__PURE__*/function () {
 
                         _context7.next = 4;
                         return (0, _index.getContractAndGateway)({
-                          username: user.username,
+                          user: user,
                           chaincode: 'job',
                           contract: 'Job'
                         })["catch"](reject);

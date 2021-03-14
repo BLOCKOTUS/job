@@ -14,7 +14,7 @@ type JobId = string;
 /**
  * Job object, as stored on the ledger.
  */
-type JobType = {
+interface IJobType {
     chaincode: string;
     creator: string;
     data: string;
@@ -30,12 +30,12 @@ type JobStatus = 'pending' | 'complete';
 /**
  * A worker (a user), as returned by the network.
  */
-type Worker = {
+interface IWorker {
     _id: string;
     publicKey: string;
-};
+}
 
-type Workers = Array<Worker>;
+type Workers = IWorker[];
 
 const PENDING = 'pending';
 const COMPLETE = 'complete';
@@ -61,7 +61,7 @@ export class Job extends BlockotusContract {
 
     /**
      * Creates a job.
-     * 
+     *
      * @param {string} type = 'confirmation'
      * @param {string} data
      * @param {string} chaincode
@@ -74,7 +74,7 @@ export class Job extends BlockotusContract {
         const id: CreatorId = this.getUniqueClientId(ctx);
         const jobId: JobId = `${id}||${this.getTimestamp(ctx)}`;
 
-        const value: JobType = {
+        const value: IJobType = {
             chaincode: params[2],
             creator: id,
             data: params[1],
@@ -109,7 +109,7 @@ export class Job extends BlockotusContract {
 
     /**
      * List jobs.
-     * 
+     *
      * @param {string} status
      */
     public async listJobs(ctx: Context) {
@@ -137,7 +137,7 @@ export class Job extends BlockotusContract {
 
     /**
      * Get a job, by `jobId`
-     * 
+     *
      * @param {string} jobId
      */
     public async getJob(ctx: Context) {
@@ -150,7 +150,7 @@ export class Job extends BlockotusContract {
 
     /**
      * List jobs by `chaincode` and `key`.
-     * 
+     *
      * @param {string} chaincode
      * @param {string} key
      */
@@ -180,7 +180,7 @@ export class Job extends BlockotusContract {
 
     /**
      * Complete a job, by sending a `result`.
-     * 
+     *
      * @param {string} jobId
      * @param {string} result
      */
@@ -221,7 +221,7 @@ export class Job extends BlockotusContract {
 
     /**
      * Retrive results associated with a job.
-     * 
+     *
      * @param {Context} ctx
      * @param {string} jobId
      */
@@ -272,18 +272,18 @@ export class Job extends BlockotusContract {
 
     /**
      * Construct an array of compositeKeys, for the array of workers and a jobId
-     * 
+     *
      * @param {Context} ctx
      * @param {Workers} workersIds
      * @param {JobStatus} status
      * @param {JobId} jobId
      */
     private async createCompositeKeyForWorkers(
-        ctx: Context, 
-        workersIds: Workers, 
-        status: JobStatus, 
-        jobId: JobId
-    ): Promise<Array<string>> {
+        ctx: Context,
+        workersIds: Workers,
+        status: JobStatus,
+        jobId: JobId,
+    ): Promise<string[]> {
         return new Promise((r) => {
             const promisesWorker = workersIds.map((worker) => ctx.stub.createCompositeKey(
                 'workerId~status~jobId',
@@ -299,11 +299,11 @@ export class Job extends BlockotusContract {
 
     /**
      * Put an array for compositeKeys in the ledger.
-     * 
+     *
      * @param {Context} ctx
-     * @param {Array<string>} workers
+     * @param {string[]} workers
      */
-    private async putCompositeKeyForWorkers(ctx: Context, workersCompositeKeys: Array<string>): Promise<void[]> {
+    private async putCompositeKeyForWorkers(ctx: Context, workersCompositeKeys: string[]): Promise<void[]> {
         return new Promise((r) => {
             const promises = workersCompositeKeys.map((i) => ctx.stub.putState(i, Buffer.from('\u0000')));
             Promise.all(promises).then(r).catch(console.log);
